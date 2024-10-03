@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable Generator</title>
+    <link rel="stylesheet" href="f.css"> <!-- Link to external CSS -->
+</head>
+<body>
+    <h1>MIDs Time Table Generator</h1>
+
+    <!-- Form to input timetable details -->
+    <div id="form-section">
+        <label>Date:</label>
+        <input type="date" id="date">
+        <label>Day:</label>
+        <input type="text" id="day">
+        <label>Course Name:</label>
+        <input type="text" id="course">
+        <label>Start Time:</label>
+        <input type="time" id="start">
+        <label>End Time:</label>
+        <input type="time" id="end">
+        <button id="add-btn">Add Course</button>
+        <button id="clear-btn">Clear Last Course</button>
+        <button id="update-btn" style="display: none;">Update Course</button> <!-- Update button -->
+    </div>
+
+    <!-- Table to display timetable -->
+    <div id="timetable-section">
+        <h2>Your Timetable</h2>
+        <table id="timetable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Course Name</th>
+                    <th>Timing</th>
+                    <th>Actions</th> <!-- Add a column for edit actions -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dynamic rows will go here -->
+            </tbody>
+        </table>
+    </div>
+
+    <button id="save-btn">Save Timetable</button> <!-- New Save Timetable button -->
+
+    <script src="script.js"></script> <!-- Link to external JavaScript -->
+</body>
+</html>
