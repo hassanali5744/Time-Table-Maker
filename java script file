@@ -1,0 +1,146 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const addButton = document.getElementById('add-btn');
+    const clearButton = document.getElementById('clear-btn');
+    const updateButton = document.getElementById('update-btn'); // Get the update button
+    const saveButton = document.getElementById('save-btn'); // Get the save button
+    const timetable = document.getElementById('timetable').querySelector('tbody');
+
+    let editIndex = null; // Track which row is being edited
+
+    // Event listener to add a new course
+    addButton.addEventListener('click', () => {
+        const date = document.getElementById('date').value;
+        const day = document.getElementById('day').value;
+        const course = document.getElementById('course').value;
+        const startTime = document.getElementById('start').value;
+        const endTime = document.getElementById('end').value;
+
+        if (!date || !day || !course || !startTime || !endTime) {
+            alert('Please fill out all fields.');
+            return;
+        }
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${date}</td>
+            <td>${day}</td>
+            <td>${course}</td>
+            <td>${startTime} - ${endTime}</td>
+            <td><button class="edit-btn">Edit</button></td>
+        `;
+        
+        timetable.appendChild(newRow);
+
+        // Clear form inputs
+        clearForm();
+
+        // Add edit functionality to the new row
+        addEditFunctionality(newRow);
+    });
+
+    // Event listener to clear the last course
+    clearButton.addEventListener('click', () => {
+        const rows = timetable.getElementsByTagName('tr');
+        if (rows.length > 0) {
+            timetable.removeChild(rows[rows.length - 1]);
+        } else {
+            alert('No more courses to remove.');
+        }
+    });
+
+    // Event listener to save the timetable as CSV
+    saveButton.addEventListener('click', () => {
+        const rows = timetable.getElementsByTagName('tr');
+        if (rows.length === 0) {
+            alert('No courses in the timetable.');
+            return;
+        }
+
+        let csvContent = 'Date,Day,Course Name,Timing\n'; // CSV header
+        for (let row of rows) {
+            const cells = row.getElementsByTagName('td');
+            const rowData = [
+                cells[0].textContent, // Date
+                cells[1].textContent, // Day
+                cells[2].textContent, // Course Name
+                cells[3].textContent  // Timing
+            ].join(',');
+            csvContent += rowData + '\n';
+        }
+
+        // Create a downloadable CSV file
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'timetable.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    // Function to clear form inputs
+    function clearForm() {
+        document.getElementById('date').value = '';
+        document.getElementById('day').value = '';
+        document.getElementById('course').value = '';
+        document.getElementById('start').value = '';
+        document.getElementById('end').value = '';
+    }
+
+    // Function to add edit functionality to a row
+    function addEditFunctionality(row) {
+        const editButton = row.querySelector('.edit-btn');
+        editButton.addEventListener('click', () => {
+            // Get the row data
+            const cells = row.getElementsByTagName('td');
+            document.getElementById('date').value = cells[0].textContent;
+            document.getElementById('day').value = cells[1].textContent;
+            document.getElementById('course').value = cells[2].textContent;
+            const times = cells[3].textContent.split(' - ');
+            document.getElementById('start').value = times[0];
+            document.getElementById('end').value = times[1];
+
+            // Show the update button and hide the add button
+            addButton.style.display = 'none';
+            updateButton.style.display = 'inline-block';
+
+            // Set the edit index to the current row
+            editIndex = row;
+        });
+    }
+
+    // Event listener to update an edited course
+    updateButton.addEventListener('click', () => {
+        const date = document.getElementById('date').value;
+        const day = document.getElementById('day').value;
+        const course = document.getElementById('course').value;
+        const startTime = document.getElementById('start').value;
+        const endTime = document.getElementById('end').value;
+
+        if (!date || !day || !course || !startTime || !endTime) {
+            alert('Please fill out all fields.');
+            return;
+        }
+
+        // Update the selected row with the new data
+        if (editIndex) {
+            const cells = editIndex.getElementsByTagName('td');
+            cells[0].textContent = date;
+            cells[1].textContent = day;
+            cells[2].textContent = course;
+            cells[3].textContent = `${startTime} - ${endTime}`;
+
+            // Clear the edit index after updating
+            editIndex = null;
+        }
+
+        // Hide the update button and show the add button again
+        updateButton.style.display = 'none';
+        addButton.style.display = 'inline-block';
+
+        // Clear the form inputs
+        clearForm();
+    });
+});
